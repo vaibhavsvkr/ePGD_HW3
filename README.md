@@ -6,8 +6,8 @@
 
 ## 🌐 Live UI
 
-**[https://your-project.vercel.app](https://your-project.vercel.app)**
-> *Deploy the `ui/` folder to Vercel and update this link*
+**[https://e-pgd-hw-3.vercel.app](https://e-pgd-hw-3.vercel.app)**
+> *Deployed on Vercel — Connect your MetaMask to Sepolia testnet to interact with the DEX*
 
 ---
 
