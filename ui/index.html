@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PixelDEX — Decentralized Exchange</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset & Base ─────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0b0c10;
+    --surface:   #13151c;
+    --card:      #1a1d28;
+    --border:    #252836;
+    --accent:    #00e5ff;
+    --accent2:   #7c3aed;
+    --green:     #00d084;
+    --red:       #ff4d6d;
+    --text:      #e8eaf0;
+    --muted:     #6b7280;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(0,229,255,.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,58,237,.07) 0%, transparent 60%);
+  }
+
+  /* ── Scrollbar ────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── Layout ───────────────────────────────────────────────────────── */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(11,12,16,.85);
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--accent);
+  }
+  .logo span { color: var(--accent2); }
+
+  nav { display: flex; gap: 6px; }
+  nav button {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: .85rem;
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  nav button:hover, nav button.active {
+    color: var(--text);
+    border-color: var(--border);
+    background: var(--card);
+  }
+  nav button.active { color: var(--accent); border-color: var(--accent); }
+
+  #connectBtn {
+    background: linear-gradient(135deg, var(--accent2), #5b21b6);
+    border: none;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    padding: 9px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    letter-spacing: .04em;
+  }
+  #connectBtn:hover { opacity: .85; transform: translateY(-1px); }
+  #connectBtn.connected {
+    background: linear-gradient(135deg, #064e3b, #065f46);
+    color: var(--green);
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── Pool Stats Bar ───────────────────────────────────────────────── */
+  #statsBar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .stat-label {
+    font-size: .72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    color: var(--accent);
+  }
+  .stat-value.green { color: var(--green); }
+
+  /* ── Panels ───────────────────────────────────────────────────────── */
+  .panel { display: none; animation: fadeIn .3s ease; }
+  .panel.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Card ─────────────────────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .card-title {
+    font-family: var(--font-mono);
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 22px;
+    letter-spacing: .04em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::before {
+    content: '';
+    display: block;
+    width: 3px; height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ── Token Input ──────────────────────────────────────────────────── */
+  .token-input-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+    transition: border-color .2s;
+  }
+  .token-input-wrap:focus-within { border-color: var(--accent); }
+
+  .token-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+
+  .token-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .token-balance { font-size: .75rem; color: var(--muted); }
+  .token-balance span { color: var(--text); }
+
+  .input-row { display: flex; align-items: center; gap: 10px; }
+  .token-input-wrap input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    color: var(--text);
+    width: 100%;
+  }
+  .token-input-wrap input::placeholder { color: var(--muted); }
+
+  .token-badge {
+    background: var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  .max-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: .7rem;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: .05em;
+    transition: background .15s;
+  }
+  .max-btn:hover { background: rgba(0,229,255,.1); }
+
+  /* ── Arrow ────────────────────────────────────────────────────────── */
+  .arrow-row {
+    display: flex; justify-content: center; align-items: center;
+    margin: 6px 0;
+  }
+  .arrow-btn {
+    background: var(--border);
+    border: 2px solid var(--card);
+    color: var(--accent);
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, transform .2s;
+  }
+  .arrow-btn:hover { background: var(--surface); transform: rotate(180deg); }
+
+  /* ── Info Row ─────────────────────────────────────────────────────── */
+  .info-row {
+    display: flex; justify-content: space-between;
+    font-size: .78rem;
+    color: var(--muted);
+    padding: 6px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .info-row span:last-child { color: var(--text); font-family: var(--font-mono); }
+
+  /* ── Primary Button ───────────────────────────────────────────────── */
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent) 0%, #00b8d4 100%);
+    color: #000;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 18px;
+    transition: opacity .2s, transform .1s, box-shadow .2s;
+  }
+  .btn-primary:hover {
+    opacity: .9;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(0,229,255,.25);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-danger {
+    background: linear-gradient(135deg, var(--red), #c2185b);
+    color: #fff;
+  }
+
+  /* ── Two column layout for liquidity ─────────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 960px; margin: 0 auto; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } #statsBar { grid-template-columns: 1fr 1fr; } }
+
+  /* ── Toast ────────────────────────────────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 30px; right: 30px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: .85rem;
+    max-width: 340px;
+    transform: translateY(120%);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    z-index: 999;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  #toast.show { transform: translateY(0); }
+  #toast.success { border-color: var(--green); }
+  #toast.error   { border-color: var(--red); }
+  #toast .icon { font-size: 1.1rem; margin-top: 1px; }
+  #toast .toast-body { flex: 1; }
+  #toast .toast-title { font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  #toast .toast-msg { color: var(--muted); font-size: .78rem; word-break: break-all; }
+
+  /* ── Tx Hash ──────────────────────────────────────────────────────── */
+  .tx-link {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: var(--accent);
+    text-decoration: none;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    margin-top: 6px;
+  }
+  .tx-link:hover { text-decoration: underline; }
+
+  /* ── Section divider ──────────────────────────────────────────────── */
+  .section-header {
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  /* ── Lp distribution table ────────────────────────────────────────── */
+  .lp-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  .lp-table th { color: var(--muted); font-weight: 500; text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+  .lp-table td { padding: 10px 12px; border-bottom: 1px solid rgba(37,40,54,.5); font-family: var(--font-mono); font-size: .8rem; }
+  .lp-table tr:last-child td { border-bottom: none; }
+  .badge-you { background: rgba(0,229,255,.12); color: var(--accent); font-size: .65rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+
+  /* ── Arb card extras ──────────────────────────────────────────────── */
+  .arb-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    font-size: .82rem;
+  }
+  .arb-result .profit { font-family: var(--font-mono); color: var(--green); font-size: 1.1rem; font-weight: 700; }
+  .arb-result .no-profit { color: var(--red); }
+
+  /* ── Spinner ──────────────────────────────────────────────────────── */
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(0,0,0,.3);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Wallet address ───────────────────────────────────────────────── */
+  .wallet-address {
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    color: var(--green);
+    background: rgba(0,208,132,.08);
+    border: 1px solid rgba(0,208,132,.2);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: .85rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    outline: none;
+    width: 100%;
+    margin-bottom: 14px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────── -->
+<header>
+  <div class="logo">Pixel<span>DEX</span></div>
+  <nav>
+    <button class="active" onclick="showPanel('swap', this)">Swap</button>
+    <button onclick="showPanel('liquidity', this)">Liquidity</button>
+    <button onclick="showPanel('arbitrage', this)">Arbitrage</button>
+    <button onclick="showPanel('pool', this)">Pool Info</button>
+  </nav>
+  <button id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
+</header>
+
+<!-- ── Main ────────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Stats Bar -->
+  <div id="statsBar">
+    <div class="stat-card">
+      <div class="stat-label">Reserve A (TKA)</div>
+      <div class="stat-value" id="statResA">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Reserve B (TKB)</div>
+      <div class="stat-value" id="statResB">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Spot Price (B/A)</div>
+      <div class="stat-value green" id="statSpot">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">LP Supply</div>
+      <div class="stat-value" id="statLP">—</div>
+    </div>
+  </div>
+
+  <!-- ── SWAP PANEL ────────────────────────────────────────────────── -->
+  <div id="panel-swap" class="panel active">
+    <div class="card">
+      <div class="card-title">Swap Tokens</div>
+
+      <div class="token-input-wrap">
+        <div class="token-row">
+          <span class="token-label">You Pay</span>
+          <span class="token-balance">Balance: <span id="balA_swap">—</span></span>
+        </div>
+        <div class="input-row">
+          <input id="swapAmtIn" type="number" placeholder="0.0" min="0" oninput="calcSwapOutput()" />
+          <button class="max-btn" onclick="setMax('swapAmtIn','balA_swap')">MAX</button>
+          <div class="token-badge" id="swapInBadge">TKA</div>
+        </div>
+      </div>
+
+      <div class="arrow-row">
+        <button class="arrow-btn" onclick="flipSwap()" title="Flip direction">⇅</button>
+      </div>
+
+      <div class="token-input-wrap">
+        <div class="token-row">
+          <span class="token-label">You Receive</span>
+          <span class="token-balance">Balance: <span id="balB_swap">—</span></span>
+        </div>
+        <div class="input-row">
+          <input id="swapAmtOut" type="number" placeholder="0.0" readonly />
+          <div class="token-badge" id="swapOutBadge">TKB</div>
+        </div>
+      </div>
+
+      <div class="info-row"><span>Swap Fee</span><span>0.30%</span></div>
+      <div class="info-row"><span>Slippage (est.)</span><span id="slippageEst">—</span></div>
+      <div class="info-row"><span>Rate</span><span id="swapRate">—</span></div>
+
+      <button class="btn-primary" id="swapBtn" onclick="doSwap()" disabled>Connect Wallet</button>
+    </div>
+  </div>
+
+  <!-- ── LIQUIDITY PANEL ───────────────────────────────────────────── -->
+  <div id="panel-liquidity" class="panel">
+    <div class="two-col">
+
+      <!-- Add Liquidity -->
+      <div class="card">
+        <div class="card-title">Add Liquidity</div>
+
+        <div class="token-input-wrap">
+          <div class="token-row">
+            <span class="token-label">TokenA Amount</span>
+            <span class="token-balance">Bal: <span id="balA_liq">—</span></span>
+          </div>
+          <div class="input-row">
+            <input id="liqAmtA" type="number" placeholder="0.0" min="0" oninput="calcLiqB()" />
+            <div class="token-badge">TKA</div>
+          </div>
+        </div>
+
+        <div class="token-input-wrap">
+          <div class="token-row">
+            <span class="token-label">TokenB Amount</span>
+            <span class="token-balance">Bal: <span id="balB_liq">—</span></span>
+          </div>
+          <div class="input-row">
+            <input id="liqAmtB" type="number" placeholder="0.0 (auto-filled)" />
+            <div class="token-badge">TKB</div>
+          </div>
+        </div>
+
+        <div class="info-row"><span>LP Tokens you receive</span><span id="lpReceive">—</span></div>
+        <div class="info-row"><span>Pool share</span><span id="poolShare">—</span></div>
+
+        <button class="btn-primary" id="addLiqBtn" onclick="doAddLiquidity()" disabled>Connect Wallet</button>
+      </div>
+
+      <!-- Remove Liquidity -->
+      <div class="card">
+        <div class="card-title">Remove Liquidity</div>
+
+        <div class="token-input-wrap">
+          <div class="token-row">
+            <span class="token-label">LP Tokens to burn</span>
+            <span class="token-balance">LP Bal: <span id="lpBal">—</span></span>
+          </div>
+          <div class="input-row">
+            <input id="removeLPAmt" type="number" placeholder="0.0" min="0" oninput="calcRemoveOutput()" />
+            <button class="max-btn" onclick="setMax('removeLPAmt','lpBal')">MAX</button>
+            <div class="token-badge">LPT</div>
+          </div>
+        </div>
+
+        <div class="info-row"><span>TKA you receive</span><span id="removeA">—</span></div>
+        <div class="info-row"><span>TKB you receive</span><span id="removeB">—</span></div>
+
+        <button class="btn-primary btn-danger" id="removeLiqBtn" onclick="doRemoveLiquidity()" disabled>Connect Wallet</button>
+
+        <div style="margin-top:20px;">
+          <div class="section-header">Your LP Position</div>
+          <table class="lp-table">
+            <thead><tr><th>Token</th><th>Amount</th></tr></thead>
+            <tbody id="lpPositionTable">
+              <tr><td colspan="2" style="color:var(--muted);text-align:center;padding:14px">Connect wallet to view</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ARBITRAGE PANEL ───────────────────────────────────────────── -->
+  <div id="panel-arbitrage" class="panel">
+    <div class="card" style="max-width:560px">
+      <div class="card-title">Cross-DEX Arbitrage</div>
+
+      <div style="margin-bottom:14px">
+        <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Direction</label>
+        <select id="arbDirection">
+          <option value="AtoB">TKA → TKB on DEX1, TKB → TKA on DEX2</option>
+          <option value="BtoA">TKB → TKA on DEX1, TKA → TKB on DEX2</option>
+        </select>
+      </div>
+
+      <div class="token-input-wrap">
+        <div class="token-row">
+          <span class="token-label">Capital to deploy</span>
+          <span class="token-balance" id="arbBalLabel">Bal: —</span>
+        </div>
+        <div class="input-row">
+          <input id="arbAmtIn" type="number" placeholder="0.0" min="0" oninput="calcArb()" />
+          <div class="token-badge" id="arbBadge">TKA</div>
+        </div>
+      </div>
+
+      <div id="arbResult" class="arb-result" style="display:none"></div>
+
+      <button class="btn-primary" id="arbBtn" onclick="doArbitrage()" disabled>Connect Wallet</button>
+
+      <div style="margin-top:20px;" id="dexRatioInfo">
+        <div class="info-row"><span>DEX1 rate (B/A)</span><span id="dex1Rate">—</span></div>
+        <div class="info-row"><span>DEX2 rate (B/A)</span><span id="dex2Rate">—</span></div>
+        <div class="info-row"><span>Opportunity</span><span id="arbOpportunity">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── POOL INFO PANEL ───────────────────────────────────────────── -->
+  <div id="panel-pool" class="panel">
+    <div class="card" style="max-width:640px">
+      <div class="card-title">Pool Information</div>
+
+      <table class="lp-table" style="margin-bottom:24px">
+        <tbody id="poolInfoTable">
+          <tr><td>Reserve TKA</td><td id="pi_resA">—</td></tr>
+          <tr><td>Reserve TKB</td><td id="pi_resB">—</td></tr>
+          <tr><td>Spot Price (TKB/TKA)</td><td id="pi_spot">—</td></tr>
+          <tr><td>Spot Price (TKA/TKB)</td><td id="pi_spotInv">—</td></tr>
+          <tr><td>Reserve Ratio (A/B)</td><td id="pi_ratio">—</td></tr>
+          <tr><td>Total LP Supply</td><td id="pi_lpSupply">—</td></tr>
+          <tr><td>Your LP Balance</td><td id="pi_yourLP">—</td></tr>
+          <tr><td>Your Pool Share</td><td id="pi_share">—</td></tr>
+          <tr><td>Your TKA (if withdrawn)</td><td id="pi_yourA">—</td></tr>
+          <tr><td>Your TKB (if withdrawn)</td><td id="pi_yourB">—</td></tr>
+        </tbody>
+      </table>
+
+      <button class="btn-primary" style="max-width:200px;margin:0 auto;display:block" onclick="refreshAll()">↻ Refresh</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Toast ────────────────────────────────────────────────────────── -->
+<div id="toast">
+  <div class="icon" id="toastIcon">✓</div>
+  <div class="toast-body">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-msg" id="toastMsg"></div>
+    <a id="toastLink" class="tx-link" href="#" target="_blank" style="display:none"></a>
+  </div>
+</div>
+
+<!-- ── ethers.js ────────────────────────────────────────────────────── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.1/ethers.umd.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// CONFIG  –  Replace these with your deployed contract addresses
+// ══════════════════════════════════════════════════════════════════════
+const CONFIG = {
+  TESTNET_NAME:    "Sepolia",
+  CHAIN_ID:        11155111,
+  EXPLORER:        "https://sepolia.etherscan.io",
+
+  TOKEN_A:         "0xa3825a41bCE54C9ae19c36984Cf8a2f983da6ebD",
+  TOKEN_B:         "0x74166144500f75D6B5372543000c129100Da7A46",
+  DEX1:            "0xd01a010F8A1e60D8D0e0Fe5890478fc24f79bCB3",
+  DEX2:            "0x27572fAB42CFFe8be595b5FF32a20094ccB95A91",
+  LP_TOKEN:        "0x8990AEB55ea446418c68F995a180e9040A954A74",
+  ARBITRAGE:       "0x7753c4E551cCa47E2b81b5559CfAA1558813a07e",
+};
+
+// ── ABIs (minimal) ──────────────────────────────────────────────────
+const ERC20_ABI = [
+  "function balanceOf(address) view returns (uint256)",
+  "function approve(address spender, uint256 amount) returns (bool)",
+  "function allowance(address owner, address spender) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+  "function totalSupply() view returns (uint256)",
+];
+
+const DEX_ABI = [
+  "function reserveA() view returns (uint256)",
+  "function reserveB() view returns (uint256)",
+  "function spotPrice() view returns (uint256)",
+  "function getReserves() view returns (uint256, uint256)",
+  "function getPriceAinB() view returns (uint256)",
+  "function getPriceBinA() view returns (uint256)",
+  "function getReserveRatio() view returns (uint256)",
+  "function getAmountOut(uint256 amountAIn) view returns (uint256)",
+  "function addLiquidity(uint256 amountA, uint256 amountB) returns (uint256)",
+  "function removeLiquidity(uint256 lpAmount) returns (uint256, uint256)",
+  "function swapAforB(uint256 amountAIn) returns (uint256)",
+  "function swapBforA(uint256 amountBIn) returns (uint256)",
+  "function lpToken() view returns (address)",
+];
+
+const ARB_ABI = [
+  "function checkArbitrage(address dex1, address dex2, uint256 amountIn, bool directionAtoB) view returns (bool profitable, uint256 expectedProfit)",
+  "function executeArbitrage(address dex1, address dex2, address tokenA, address tokenB, uint256 amountIn, bool directionAtoB) returns (uint256 profit)",
+  "function depositToken(address token, uint256 amount)",
+];
+
+// ── State ───────────────────────────────────────────────────────────
+let provider, signer, userAddr;
+let tokenA, tokenB, dex1, dex2, lpToken, arb;
+let swapDirection = "AtoB";   // "AtoB" or "BtoA"
+
+// ══════════════════════════════════════════════════════════════════════
+// Wallet
+// ══════════════════════════════════════════════════════════════════════
+async function connectWallet() {
+  if (!window.ethereum) { toast("MetaMask not found", "Please install MetaMask.", "error"); return; }
+  try {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer   = await provider.getSigner();
+    userAddr = await signer.getAddress();
+
+    const network = await provider.getNetwork();
+    if (Number(network.chainId) !== CONFIG.CHAIN_ID) {
+      toast("Wrong Network", `Please switch to ${CONFIG.TESTNET_NAME} testnet.`, "error");
+      return;
+    }
+
+    initContracts();
+    updateConnectBtn();
+    await refreshAll();
+    enableButtons();
+    toast("Wallet Connected", shortAddr(userAddr), "success");
+
+    window.ethereum.on("accountsChanged", () => location.reload());
+    window.ethereum.on("chainChanged",    () => location.reload());
+  } catch(e) { toast("Connection Failed", e.message, "error"); }
+}
+
+function initContracts() {
+  tokenA  = new ethers.Contract(CONFIG.TOKEN_A,  ERC20_ABI, signer);
+  tokenB  = new ethers.Contract(CONFIG.TOKEN_B,  ERC20_ABI, signer);
+  dex1    = new ethers.Contract(CONFIG.DEX1,     DEX_ABI,   signer);
+  dex2    = new ethers.Contract(CONFIG.DEX2,     DEX_ABI,   signer);
+  lpToken = new ethers.Contract(CONFIG.LP_TOKEN, ERC20_ABI, signer);
+  arb     = new ethers.Contract(CONFIG.ARBITRAGE, ARB_ABI,  signer);
+}
+
+function updateConnectBtn() {
+  const btn = document.getElementById("connectBtn");
+  btn.textContent = shortAddr(userAddr);
+  btn.classList.add("connected");
+}
+
+function enableButtons() {
+  ["swapBtn","addLiqBtn","removeLiqBtn","arbBtn"].forEach(id => {
+    const el = document.getElementById(id);
+    el.disabled = false;
+    if (el.textContent === "Connect Wallet") el.textContent = el.id === "removeLiqBtn" ? "Remove Liquidity" : el.id === "addLiqBtn" ? "Add Liquidity" : el.id === "arbBtn" ? "Check & Execute" : "Swap";
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Refresh all data
+// ══════════════════════════════════════════════════════════════════════
+async function refreshAll() {
+  if (!dex1) return;
+  try {
+    const [resA, resB] = await dex1.getReserves();
+    const spot         = await dex1.spotPrice();
+    const lpSupply     = await lpToken.totalSupply();
+
+    const fA = fmt(resA);  const fB = fmt(resB);
+    const fS = fmtPrice(spot);
+    const fL = fmt(lpSupply);
+
+    // Stats bar
+    set("statResA", fA);  set("statResB", fB);  set("statSpot", fS);  set("statLP", fL);
+
+    // Pool info panel
+    set("pi_resA",    fA);  set("pi_resB",    fB);
+    set("pi_spot",    fS);
+    set("pi_spotInv", fmtPrice(await dex1.getPriceBinA()));
+    set("pi_ratio",   fmtPrice(await dex1.getReserveRatio()));
+    set("pi_lpSupply", fL);
+
+    // DEX2 rates for arb
+    const [r2A, r2B] = await dex2.getReserves();
+    set("dex1Rate", (Number(resB) / Number(resA)).toFixed(6));
+    set("dex2Rate", (Number(r2B)  / Number(r2A)).toFixed(6));
+    const diff = Math.abs(Number(resB)/Number(resA) - Number(r2B)/Number(r2A));
+    set("arbOpportunity", diff > 0.001 ? "⚡ Potential opportunity" : "≈ Rates are similar");
+
+    if (userAddr) {
+      const bA = await tokenA.balanceOf(userAddr);
+      const bB = await tokenB.balanceOf(userAddr);
+      const bL = await lpToken.balanceOf(userAddr);
+
+      const sA = fmt(bA); const sB = fmt(bB); const sL = fmt(bL);
+
+      // Swap panel
+      set("balA_swap", swapDirection === "AtoB" ? sA : sB);
+      set("balB_swap", swapDirection === "AtoB" ? sB : sA);
+
+      // Liquidity panel
+      set("balA_liq", sA); set("balB_liq", sB); set("lpBal", sL);
+
+      // Arb panel
+      const isAtoB = document.getElementById("arbDirection").value === "AtoB";
+      set("arbBalLabel", `Bal: ${isAtoB ? sA : sB}`);
+
+      // Pool info
+      set("pi_yourLP", sL);
+      if (Number(lpSupply) > 0 && Number(bL) > 0) {
+        const share = Number(bL) / Number(lpSupply);
+        set("pi_share",  (share * 100).toFixed(4) + "%");
+        set("pi_yourA",  (share * Number(resA) / 1e18).toFixed(4) + " TKA");
+        set("pi_yourB",  (share * Number(resB) / 1e18).toFixed(4) + " TKB");
+      }
+
+      // LP position table
+      if (Number(bL) > 0 && Number(lpSupply) > 0) {
+        const share = Number(bL) / Number(lpSupply);
+        document.getElementById("lpPositionTable").innerHTML = `
+          <tr><td>LP Tokens held</td><td>${sL}</td></tr>
+          <tr><td>Pool Share</td><td>${(share*100).toFixed(4)}%</td></tr>
+          <tr><td>Underlying TKA</td><td>${(share*Number(resA)/1e18).toFixed(4)}</td></tr>
+          <tr><td>Underlying TKB</td><td>${(share*Number(resB)/1e18).toFixed(4)}</td></tr>
+        `;
+      }
+    }
+  } catch(e) { console.error("refresh error", e); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Swap
+// ══════════════════════════════════════════════════════════════════════
+function flipSwap() {
+  swapDirection = swapDirection === "AtoB" ? "BtoA" : "AtoB";
+  set("swapInBadge",  swapDirection === "AtoB" ? "TKA" : "TKB");
+  set("swapOutBadge", swapDirection === "AtoB" ? "TKB" : "TKA");
+  document.getElementById("swapAmtIn").value  = "";
+  document.getElementById("swapAmtOut").value = "";
+  set("swapRate", "—"); set("slippageEst", "—");
+  refreshAll();
+}
+
+async function calcSwapOutput() {
+  const amtIn = parseFloat(document.getElementById("swapAmtIn").value);
+  if (!amtIn || amtIn <= 0 || !dex1) { set("swapAmtOut",""); set("swapRate","—"); set("slippageEst","—"); return; }
+  try {
+    const [resA, resB] = await dex1.getReserves();
+    const amtInWei = ethers.parseEther(amtIn.toString());
+    let amtOut, spotBefore, actualRate;
+
+    if (swapDirection === "AtoB") {
+      const aFee = BigInt(amtInWei) * 997n;
+      amtOut = (BigInt(resB) * aFee) / (BigInt(resA) * 1000n + aFee);
+      spotBefore = Number(resB) / Number(resA);
+      actualRate = Number(amtOut) / Number(amtInWei);
+    } else {
+      const bFee = BigInt(amtInWei) * 997n;
+      amtOut = (BigInt(resA) * bFee) / (BigInt(resB) * 1000n + bFee);
+      spotBefore = Number(resA) / Number(resB);
+      actualRate = Number(amtOut) / Number(amtInWei);
+    }
+
+    const slip = ((actualRate - spotBefore) / spotBefore * 100).toFixed(3);
+    document.getElementById("swapAmtOut").value = (Number(amtOut) / 1e18).toFixed(6);
+    set("swapRate", `1 ${swapDirection==="AtoB"?"TKA":"TKB"} = ${actualRate.toFixed(6)} ${swapDirection==="AtoB"?"TKB":"TKA"}`);
+    set("slippageEst", `${slip}%`);
+  } catch(e) { console.error(e); }
+}
+
+async function doSwap() {
+  if (!signer) return;
+  const amtIn = document.getElementById("swapAmtIn").value;
+  if (!amtIn || parseFloat(amtIn) <= 0) { toast("Input required", "Enter an amount to swap.", "error"); return; }
+
+  setBtnLoading("swapBtn", true);
+  try {
+    const amtWei = ethers.parseEther(amtIn);
+    let tx;
+    if (swapDirection === "AtoB") {
+      await approveIfNeeded(tokenA, CONFIG.DEX1, amtWei);
+      tx = await dex1.swapAforB(amtWei);
+    } else {
+      await approveIfNeeded(tokenB, CONFIG.DEX1, amtWei);
+      tx = await dex1.swapBforA(amtWei);
+    }
+    await tx.wait();
+    toast("Swap Executed ✓", `Tx: ${shortHash(tx.hash)}`, "success", tx.hash);
+    document.getElementById("swapAmtIn").value = "";
+    document.getElementById("swapAmtOut").value = "";
+    await refreshAll();
+  } catch(e) { toast("Swap Failed", e.reason || e.message, "error"); }
+  setBtnLoading("swapBtn", false);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Liquidity
+// ══════════════════════════════════════════════════════════════════════
+async function calcLiqB() {
+  const amtA = parseFloat(document.getElementById("liqAmtA").value);
+  if (!amtA || !dex1) { set("lpReceive","—"); set("poolShare","—"); return; }
+  try {
+    const [resA, resB] = await dex1.getReserves();
+    const lpSupply     = await lpToken.totalSupply();
+    if (Number(resA) > 0) {
+      const amtB    = amtA * Number(resB) / Number(resA);
+      const lpMint  = amtA * Number(lpSupply) / Number(resA);
+      document.getElementById("liqAmtB").value = amtB.toFixed(6);
+      set("lpReceive", (lpMint / 1e18).toFixed(6) + " LPT");
+      const newLP = Number(lpSupply) + lpMint;
+      set("poolShare", (lpMint / newLP * 100).toFixed(4) + "%");
+    }
+  } catch(e) {}
+}
+
+async function doAddLiquidity() {
+  if (!signer) return;
+  const amtA = document.getElementById("liqAmtA").value;
+  const amtB = document.getElementById("liqAmtB").value;
+  if (!amtA || !amtB) { toast("Input required", "Enter amounts to add.", "error"); return; }
+
+  setBtnLoading("addLiqBtn", true);
+  try {
+    const wA = ethers.parseEther(amtA);
+    const wB = ethers.parseEther(amtB);
+    await approveIfNeeded(tokenA, CONFIG.DEX1, wA);
+    await approveIfNeeded(tokenB, CONFIG.DEX1, wB);
+    const tx = await dex1.addLiquidity(wA, wB);
+    await tx.wait();
+    toast("Liquidity Added ✓", `LP tokens minted. Tx: ${shortHash(tx.hash)}`, "success", tx.hash);
+    document.getElementById("liqAmtA").value = "";
+    document.getElementById("liqAmtB").value = "";
+    await refreshAll();
+  } catch(e) { toast("Add Liquidity Failed", e.reason || e.message, "error"); }
+  setBtnLoading("addLiqBtn", false);
+}
+
+async function calcRemoveOutput() {
+  const lpAmt = parseFloat(document.getElementById("removeLPAmt").value);
+  if (!lpAmt || !dex1) return;
+  try {
+    const [resA, resB] = await dex1.getReserves();
+    const lpSupply     = await lpToken.totalSupply();
+    const share = lpAmt * 1e18 / Number(lpSupply);
+    set("removeA", (share * Number(resA) / 1e18 / 1e18).toFixed(6) + " TKA");
+    set("removeB", (share * Number(resB) / 1e18 / 1e18).toFixed(6) + " TKB");
+  } catch(e) {}
+}
+
+async function doRemoveLiquidity() {
+  if (!signer) return;
+  const lpAmt = document.getElementById("removeLPAmt").value;
+  if (!lpAmt || parseFloat(lpAmt) <= 0) { toast("Input required", "Enter LP amount to remove.", "error"); return; }
+
+  setBtnLoading("removeLiqBtn", true);
+  try {
+    const wLP = ethers.parseEther(lpAmt);
+    await approveIfNeeded(lpToken, CONFIG.DEX1, wLP);
+    const tx = await dex1.removeLiquidity(wLP);
+    await tx.wait();
+    toast("Liquidity Removed ✓", `LP tokens burned. Tx: ${shortHash(tx.hash)}`, "success", tx.hash);
+    document.getElementById("removeLPAmt").value = "";
+    await refreshAll();
+  } catch(e) { toast("Remove Liquidity Failed", e.reason || e.message, "error"); }
+  setBtnLoading("removeLiqBtn", false);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Arbitrage
+// ══════════════════════════════════════════════════════════════════════
+async function calcArb() {
+  const amtIn = parseFloat(document.getElementById("arbAmtIn").value);
+  const dir   = document.getElementById("arbDirection").value === "AtoB";
+  if (!amtIn || !arb) { document.getElementById("arbResult").style.display="none"; return; }
+  try {
+    const amtWei = ethers.parseEther(amtIn.toString());
+    const [profitable, expectedProfit] = await arb.checkArbitrage(CONFIG.DEX1, CONFIG.DEX2, amtWei, dir);
+    const res = document.getElementById("arbResult");
+    res.style.display = "block";
+    if (profitable) {
+      res.innerHTML = `
+        <div style="color:var(--muted);font-size:.75rem;margin-bottom:4px">ESTIMATED PROFIT</div>
+        <div class="profit">+${(Number(expectedProfit)/1e18).toFixed(6)} ${dir ? "TKA" : "TKB"}</div>
+        <div style="color:var(--green);font-size:.78rem;margin-top:6px">✓ Arbitrage opportunity detected</div>
+      `;
+    } else {
+      res.innerHTML = `<div class="no-profit">✗ No profitable opportunity at this amount.<br><span style="font-size:.75rem;color:var(--muted)">Try a different amount or check back later.</span></div>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function doArbitrage() {
+  if (!signer) return;
+  const amtIn = document.getElementById("arbAmtIn").value;
+  const dir   = document.getElementById("arbDirection").value === "AtoB";
+  if (!amtIn) { toast("Input required", "Enter arbitrage capital amount.", "error"); return; }
+
+  setBtnLoading("arbBtn", true);
+  try {
+    const amtWei = ethers.parseEther(amtIn);
+    // First deposit capital into arb contract
+    if (dir) {
+      await approveIfNeeded(tokenA, CONFIG.ARBITRAGE, amtWei);
+      await arb.depositToken(CONFIG.TOKEN_A, amtWei);
+    } else {
+      await approveIfNeeded(tokenB, CONFIG.ARBITRAGE, amtWei);
+      await arb.depositToken(CONFIG.TOKEN_B, amtWei);
+    }
+    const tx = await arb.executeArbitrage(CONFIG.DEX1, CONFIG.DEX2, CONFIG.TOKEN_A, CONFIG.TOKEN_B, amtWei, dir);
+    await tx.wait();
+    toast("Arbitrage Executed ✓", `Profit returned to wallet. Tx: ${shortHash(tx.hash)}`, "success", tx.hash);
+    await refreshAll();
+  } catch(e) {
+    if (e.reason && e.reason.includes("insufficient profit")) {
+      toast("No Profit Available", "Arbitrage opportunity no longer exists or profit below threshold.", "error");
+    } else {
+      toast("Arbitrage Failed", e.reason || e.message, "error");
+    }
+  }
+  setBtnLoading("arbBtn", false);
+}
+
+document.getElementById("arbDirection").addEventListener("change", () => { calcArb(); refreshAll(); });
+
+// ══════════════════════════════════════════════════════════════════════
+// Helpers
+// ══════════════════════════════════════════════════════════════════════
+async function approveIfNeeded(token, spender, amount) {
+  const allowance = await token.allowance(userAddr, spender);
+  if (allowance < amount) {
+    const tx = await token.approve(spender, amount * 10n);  // approve 10x to avoid repeated approvals
+    await tx.wait();
+  }
+}
+
+function fmt(wei) { return (Number(wei) / 1e18).toFixed(4); }
+function fmtPrice(wei) { return (Number(wei) / 1e18).toFixed(6); }
+function shortAddr(a) { return a ? a.slice(0,6) + "..." + a.slice(-4) : ""; }
+function shortHash(h) { return h ? h.slice(0,10) + "..." + h.slice(-6) : ""; }
+function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+function setMax(inputId, balId) {
+  const bal = document.getElementById(balId)?.textContent?.replace(/[^0-9.]/g,"");
+  if (bal) { document.getElementById(inputId).value = bal; document.getElementById(inputId).dispatchEvent(new Event("input")); }
+}
+
+function setBtnLoading(id, loading) {
+  const btn = document.getElementById(id);
+  if (loading) {
+    btn._orig = btn.innerHTML;
+    btn.innerHTML = `<span class="spinner"></span>Waiting...`;
+    btn.disabled = true;
+  } else {
+    btn.innerHTML = btn._orig;
+    btn.disabled = false;
+  }
+}
+
+let toastTimer;
+function toast(title, msg, type = "success", txHash = null) {
+  const el = document.getElementById("toast");
+  document.getElementById("toastTitle").textContent = title;
+  document.getElementById("toastMsg").textContent   = msg;
+  document.getElementById("toastIcon").textContent  = type === "success" ? "✓" : "✗";
+  el.className = `show ${type}`;
+
+  const link = document.getElementById("toastLink");
+  if (txHash) {
+    link.href        = `${CONFIG.EXPLORER}/tx/${txHash}`;
+    link.textContent = `View on ${CONFIG.TESTNET_NAME} Explorer ↗`;
+    link.style.display = "block";
+  } else { link.style.display = "none"; }
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 5500);
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  document.getElementById(`panel-${name}`).classList.add("active");
+  btn.classList.add("active");
+  if (dex1) refreshAll();
+}
+</script>
+</body>
+</html>
