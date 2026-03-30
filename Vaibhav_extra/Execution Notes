@@ -1,0 +1,243 @@
+Excellent! All contracts deployed successfully! 🎉
+
+Deployed Contract Addresses:
+
+TokenA: 0xa3825a41bCE54C9ae19c36984Cf8a2f983da6ebD
+TokenB: 0x74166144500f75D6B5372543000c129100Da7A46
+DEX1: 0xd01a010F8A1e60D8D0e0Fe5890478fc24f79bCB3
+LPToken: 0x8990AEB55ea446418c68F995a180e9040A954A74
+DEX2: 0x27572fAB42CFFe8be595b5FF32a20094ccB95A91
+Arbitrage: 0x7753c4E551cCa47E2b81b5559CfAA1558813a07e
+The deployment succeeded but adding initial liquidity failed. Let me check the issue:
+
+https://e-pgd-hw-3.vercel.app
+
+command
+
+npx hardhat verify --network sepolia 0x27572fAB42CFFe8be595b5FF32a20094ccB95A91 0xa3825a41bCE54C9ae19c36984Cf8a2f983da6ebD 0x74166144500f75D6B5372543000c129100Da7A46 && npx hardhat verify --network sepolia 0x7753c4E551cCa47E2b81b5559CfAA1558813a07e
+
+
+Mint Token A
+
+[ This is a Sepolia Testnet transaction only ]
+Transaction Hash:
+0xa4b65d2011f9a84f2f84804c95755bc57499abe1482c536c6ec09a2bd904b507 
+Status:
+Indexing  This transaction has been included and will be reflected in a short while.
+Block:
+10553458
+From:
+0x4696D77bc398580e5F9ec095ba2F9c78419eb6B9 
+To:
+0xa3825a41bCE54C9ae19c36984Cf8a2f983da6ebD 
+Value:
+0 ETH
+Gas Price:
+1.500000029 Gwei (0.000000001500000029 ETH)
+
+
+Token B
+
+Transaction Action
+Transfer
+100,000
+TKB
+to
+0x4696D77bc398580e5F9ec095ba2F9c78419eb6B9
+[ This is a Sepolia Testnet transaction only ]
+Transaction Hash:
+0x4d520a69f76521cb2dcd63699a583824f7e02feae92535fecbfc5b2e8b43ab2a 
+Status:
+Success
+Block:
+10553468
+6 Block Confirmations
+Timestamp:
+1 min ago (Mar-30-2026 12:05:12 PM +UTC)
+UTC
+From:
+0x4696D77bc398580e5F9ec095ba2F9c78419eb6B9 
+Interacted With (To):
+0x74166144500f75D6B5372543000c129100Da7A46 
+ERC-20 Tokens Transferred:
+All Transfers
+Net Transfers
+From
+0x00000000...000000000
+To
+0x4696D77b...8419eb6B9
+For
+100,000
+
+ERC-20: Token B (TKB)
+Value:
+0 ETH
+Transaction Fee:
+0.0000547800010956 ETH
+Gas Price:
+1.50000003 Gwei (0.00000000150000003 ETH)
+
+
+
+SWAP TOKEN HAS
+0xf765f0dd8bf4eb6824336721719d636570cb747e04cbfcd7ab2e463fde334720
+
+
+Add Liquidity
+0x3343be47099f75ba0c7efff106a0d971c923aa89f0c37da0976d1159152b1178
+
+Swap TokenA → TokenB
+0xf765f0dd8bf4eb6824336721719d636570cb747e04cbfcd7ab2e463fde334720
+
+Swap TokenB → TokenA
+0x0e061b719c95412fb154da8115db2de5a3ecb492e1727b3783b51b2aa8993b90
+
+Remove Liquidity
+0xd6df9031992bf73eb5ad91b5d5dc0ec0aee85202af216e003f10d924e0b3a835
+
+Test Arbitrage (via Etherscan)
+Approve TokenA for DEX2:
+0xe8a5796243b7cdf2c4d0d73242cd5446555c91de2aa38535e68c16c8d1a83378
+
+Approve TokenB for DEX2:
+0x15744a930c4bc78b55a28a2d1eca822e1d269ab0779f3b8d128949bb8e8be4e7
+
+Add liquidity to DEX2 (different ratio!):
+0x0f5180fbdd1faf120386c6fb2511a1f9bf22b3df5098bd04c689a0b1a5b6c9a0
+
+Fund Arbitrage contract:
+0xaa373e0b1edce1fb8dfa2597fa2d84e69bbaa8a2a94be49afdce65c52252233a
+
+Execute PROFITABLE Arbitrage:
+Arbitrage Transaction Hashes:
+Arbitrage Attempt #1: 0xdf3cbc9cdf09da5371ccaf7caf736c7591e715c22b87f884d06b873f8289f767
+
+Arbitrage Attempt #2 (Failed): 0xcf473855dd4f0c6a40446e6efcc345f6f7cd312e6247489d3b080da0fc9fe694
+
+
+
+Arbitrage Transaction Hashes:
+Arbitrage Attempt #1: 0xdf3cbc9cdf09da5371ccaf7caf736c7591e715c22b87f884d06b873f8289f767
+
+Arbitrage Attempt #2 (Failed): 0xcf473855dd4f0c6a40446e6efcc345f6f7cd312e6247489d3b080da0fc9fe694
+
+
+
+Perfect! Let me update your README first, then I'll give you the video script. 
+
+Read [](file:///Users/a458739/Downloads/files/dex_project/README.md#28-28), lines 28 to 50
+
+Replacing 10 lines with 10 lines in [](file:///Users/a458739/Downloads/files/dex_project/README.md)
+
+
+```
+
+```
+Perfect! README updated. Now here's your **5-minute video script:**
+
+---
+
+## 🎬 VIDEO RECORDING SCRIPT (Max 5 minutes)
+
+### **Tools to Record:**
+- **Mac:** QuickTime (File → New Screen Recording)
+- **Browser:** Loom extension
+- **Any platform:** OBS Studio (free)
+
+---
+
+### **What to Show:**
+
+#### **[0:00 - 0:30] Introduction (30 seconds)**
+1. Show your GitHub repo: https://github.com/vaibhavsvkr/ePGD_HW3
+2. Say: "This is my DEX project for Homework 3, deployed on Sepolia testnet"
+3. Scroll through the README quickly showing:
+   - Contract addresses
+   - Transaction hashes table
+   - Verified contracts links
+
+#### **[0:30 - 1:00] Show Verified Contracts (30 seconds)**
+1. Click on **DEX1 Etherscan link** from README
+2. Show the **green checkmark** (verified)
+3. Click **"Contract"** tab → Show the code briefly
+4. Say: "All 6 contracts are verified on Sepolia Etherscan"
+
+#### **[1:00 - 3:00] Live UI Demo (2 minutes)**
+1. **Open your UI:** https://e-pgd-hw-3.vercel.app
+2. **Connect Wallet**
+   - Click "Connect Wallet"
+   - Show MetaMask connecting
+   - Show your token balances appear
+3. **Perform a Swap** (any direction)
+   - Go to "Swap" tab
+   - Enter amount (e.g., 10 tokens)
+   - Click "Swap"
+   - Show MetaMask confirmation popup
+   - Confirm the transaction
+   - Wait for success message
+4. **Show Transaction on Etherscan**
+   - Click the transaction hash or "View on Etherscan"
+   - Show the transaction details
+   - Point out: "Status: Success" with green checkmark
+
+#### **[3:00 - 4:00] Show Liquidity Operations (1 minute)**
+1. **Go to "Add Liquidity" or "Remove Liquidity" tab**
+2. Show your **LP Token balance**
+3. Say: "I added liquidity and received LP tokens"
+4. **Optional:** Show one of your liquidity transactions on Etherscan
+   - Open the Add Liquidity TX from your README
+   - Show "Logs" tab with minting events
+
+#### **[4:00 - 4:45] Show All Deployed Contracts (45 seconds)**
+1. **Open your README** again
+2. **Quickly click through** each contract link (don't need to explain each):
+   - TokenA ✓
+   - TokenB ✓
+   - DEX1 ✓
+   - LPToken ✓
+   - DEX2 ✓
+   - Arbitrage ✓
+3. Say: "All contracts verified and working"
+
+#### **[4:45 - 5:00] Conclusion (15 seconds)**
+1. Show your README transaction table
+2. Say:
+   - "All transaction hashes documented in the README"
+   - "Theory questions answered in theory.pdf"
+   - "Simulation results in the simulation folder"
+3. **End screen:** Show GitHub repo URL
+
+---
+
+### **Tips for Recording:**
+
+✅ **Do:**
+- Speak clearly and confidently
+- Go at a steady pace (not too fast)
+- Show your mouse cursor for clarity
+- Make sure text is readable (zoom if needed)
+- Test your audio first
+
+❌ **Don't:**
+- Don't show your private keys
+- Don't worry about mistakes - just keep going
+- Don't go over 5 minutes
+- Don't spend too much time on one thing
+
+---
+
+### **After Recording:**
+
+1. **Upload to:**
+   - YouTube (unlisted)
+   - Loom
+   - Google Drive (make public link)
+2. **Copy the link**
+3. **Update README** with video link
+4. **Push to GitHub**
+
+---
+
+**Ready to record? Just follow this script and you'll be done in one take!** 🎬
+
+Made changes.
