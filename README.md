@@ -33,8 +33,8 @@
 
 | Action | Tx Hash | Link |
 |--------|---------|------|
-| Liquidity addition + LP minting | `0xf765f0dd8bf4eb6824336721719d636570cb747e04cbfcd7ab2e463fde334720` | [View ↗](https://sepolia.etherscan.io/tx/0xf765f0dd8bf4eb6824336721719d636570cb747e04cbfcd7ab2e463fde334720) |
-| Swap TokenA → TokenB            | *See wallet transactions* | [View Wallet ↗](https://sepolia.etherscan.io/address/0x4696D77bc398580e5F9ec095ba2F9c78419eb6B9) |
+| Liquidity addition + LP minting | `0x3343be47099f75ba0c7efff106a0d971c923aa89f0c37da0976d1159152b1178` | [View ↗](https://sepolia.etherscan.io/tx/0x3343be47099f75ba0c7efff106a0d971c923aa89f0c37da0976d1159152b1178) |
+| Swap TokenA → TokenB            | `0xf765f0dd8bf4eb6824336721719d636570cb747e04cbfcd7ab2e463fde334720` | [View ↗](https://sepolia.etherscan.io/tx/0xf765f0dd8bf4eb6824336721719d636570cb747e04cbfcd7ab2e463fde334720) |
 | Swap TokenB → TokenA            | `0x0e061b719c95412fb154da8115db2de5a3ecb492e1727b3783b51b2aa8993b90` | [View ↗](https://sepolia.etherscan.io/tx/0x0e061b719c95412fb154da8115db2de5a3ecb492e1727b3783b51b2aa8993b90) |
 | Liquidity removal + LP burning  | `0xd6df9031992bf73eb5ad91b5d5dc0ec0aee85202af216e003f10d924e0b3a835` | [View ↗](https://sepolia.etherscan.io/tx/0xd6df9031992bf73eb5ad91b5d5dc0ec0aee85202af216e003f10d924e0b3a835) |
 | Arbitrage execution (attempt 1) | `0xdf3cbc9cdf09da5371ccaf7caf736c7591e715c22b87f884d06b873f8289f767` | [View ↗](https://sepolia.etherscan.io/tx/0xdf3cbc9cdf09da5371ccaf7caf736c7591e715c22b87f884d06b873f8289f767) |
