@@ -9,6 +9,9 @@ artifacts/
 # Environment variables
 .env
 
+# Personal notes & backup files
+Vaibhav_extra/
+
 # IDE
 .vscode/
 .idea/

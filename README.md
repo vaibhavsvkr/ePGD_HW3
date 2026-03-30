@@ -78,7 +78,7 @@
 
 ### 1. Access the Deployed UI
 
-Open **[https://your-project.vercel.app](https://your-project.vercel.app)** in a browser with MetaMask installed.
+Open **[https://e-pgd-hw-3.vercel.app](https://e-pgd-hw-3.vercel.app)** in a browser with MetaMask installed.
 
 ### 2. Connect Your Wallet
 
@@ -91,7 +91,7 @@ Open **[https://your-project.vercel.app](https://your-project.vercel.app)** in a
 ### 3. Obtain Test Tokens (TKA / TKB)
 
 **Option A — Via Etherscan (easiest):**
-1. Go to the [TokenA contract on Etherscan](https://sepolia.etherscan.io/address/0x...).
+1. Go to the [TokenA contract on Etherscan](https://sepolia.etherscan.io/address/0xa3825a41bCE54C9ae19c36984Cf8a2f983da6ebD#writeContract).
 2. Click **Contract → Write Contract → Connect to Web3**.
 3. Call `mint(yourAddress, 10000000000000000000000)` to mint 10 000 TKA.
 4. Repeat for TokenB.
