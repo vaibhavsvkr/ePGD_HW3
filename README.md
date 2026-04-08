@@ -44,9 +44,7 @@
 
 ## 🎬 Video Demonstration
 
-**[Watch on YouTube / Loom](https://link-to-your-video)**  
-*(Max 5 minutes — shows UI, wallet connection, swaps, liquidity, arbitrage, on-chain confirmations)*
-
+Video demo is in this repo it self by name HW3_Vaibhav.mov
 ---
 
 ## 📁 Repository Structure
